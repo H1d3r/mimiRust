@@ -148,19 +148,27 @@ fn handle_user_input(args: Vec<String>) -> Result<()> {
                     "psexec" => {
                         let config = match input.len() {
                             3 => {
-                                let config = PSExec::new(input[1].clone(), input[2].clone(), None, None);
+                                let config = PSExec::new(input[1].clone(), input[2].clone(), None, None, None, None);
                                 config
                             },
                             4 => {
-                                let config = PSExec::new(input[1].clone(), input[2].clone(), Some(input[3].clone()), None);
+                                let config = PSExec::new(input[1].clone(), input[2].clone(), Some(input[3].clone()), None, None, None);
                                 config
                             },
                             5 => {
-                                let config = PSExec::new(input[1].clone(), input[2].clone(), Some(input[3].clone()), Some(input[4].clone()));
+                                let config = PSExec::new(input[1].clone(), input[2].clone(), Some(input[3].clone()), Some(input[4].clone()), None, None);
+                                config
+                            },
+                            6 => {
+                                let config = PSExec::new(input[1].clone(), input[2].clone(), Some(input[3].clone()), Some(input[4].clone()), Some(input[5].clone()), None);
+                                config
+                            },
+                            7 => {
+                                let config = PSExec::new(input[1].clone(), input[2].clone(), Some(input[3].clone()), Some(input[4].clone()), Some(input[5].clone()), Some(input[6].clone()));
                                 config
                             },
                             _ => {
-                                println!("[*] PSExec workes as follows: psexec <computername> <binary_path> <optional: service name> <optional: serivce display name>");
+                                println!("[*] PSExec workes as follows: psexec <computername> <binary_path> <optional: service name> <optional: serivce display name> <optional: domain\\username> <optional: password of domain\\username account>");
                                 std::process::exit(0x100);  
                             },
                         };
@@ -178,9 +186,9 @@ fn handle_user_input(args: Vec<String>) -> Result<()> {
                     _ => {
                         println!("
                         \rshell <SHELL COMMAND>        Execute a shell command through cmd, returns output.
+                        \rpsexec                       Executes a service on another system.
                         \rclear                        Clears the screen of any past output.
                         \rexit                         Moves to top level menu
-                        \r(W.I.P)psexec                Executes a service on another system.
                         \r(W.I.P)pth                   Pass-the-Hash to run a command on another system.
                         \r(W.I.P)golden-ticket         Creates a golden ticket for a user account with the domain.
                         ")

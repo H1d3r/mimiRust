@@ -30,9 +30,9 @@
 
       pivioting:
               • shell <SHELL COMMAND>        Execute a shell command through cmd, returns output.
+              • psexec                       Executes a service on another system.
               • clear                        Clears the screen of any past output.
               • exit                         Moves to top level menu
-              • (W.I.P)psexec                Executes a service on another system.
               • (W.I.P)pth                   Pass-the-Hash to run a command on another system.
               • (W.I.P)golden-ticket         Creates a golden ticket for a user account with the domain.
 
@@ -51,10 +51,10 @@
   <li>Executing shell commands</li>
   <li>Extracting Windows passwords out of memory through the wdigest attack vector.</li>
   <li>Extracting Windows NTLM hashes from user accounts (aes / des) & (md5 / rc4)</li>
+  <li>PSExec to create and start a service on another endpoint.</li>
 </ul><br>
 <p>Todo:</p>
 <ul>
-  <li>PSExec to create and start a service on another endpoint.</li>
   <li>PtH (Pass-The-Hash)</li>
   <li>Kerberos Golden Ticket</li>
   <li>lsa patch to get NTLM hashes from LSASS (Local Security Authority Subsystem Service)</li>
