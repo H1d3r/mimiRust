@@ -66,11 +66,6 @@
 </ul>
 <small><strong>Maybe in the future I will make API calls obfuscated and strings polymorphic</strong></small>
 
-<h2>Detectability</h2>
-<small>The goal of MimiRust is not to be Fully Undetectable (FUD). MimiRust will require either injection or heavy obfuscation to not be detected by EDR solutions.</small>
-<p>[!] Found by Windows Defender: https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=VirTool:Win64/Mimirust.A!MTB&threatId=-2147152375</p>
-<p>[?] Not found by: https://r.virscan.org/language/en/report/bf5c58ce251da6ad04ef3d9bb0cc4df7 </p>
-
 <h2>Quick usage:</h2>
 <p>MimiRust can be ran in two different ways: from the command line using mimiRust.exe --help or in the shell by running the executable without any command line arguments. For help with the program type one of the following into mimiRust:</p>
 <ul>
