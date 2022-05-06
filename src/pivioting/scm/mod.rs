@@ -27,57 +27,33 @@ pub struct PSExec {
     pub display_name: String,
     pub username: String,
     pub password: String,
-}   
+}
 
 impl PSExec {
-    pub fn new(input_computer_name: String, input_binary_path: String, input_service_name: Option<String>, input_display_name: Option<String>, input_username: Option<String>, input_password: Option<String>) -> Self {
-        if let Some(input_service_name) = input_service_name {
-            if let Some(input_display_name) = input_display_name {
-                if let Some(input_username) = input_username {
-                    if let Some(input_password) = input_password {
-                        return Self {
-                            computer_name: input_computer_name,
-                            binary_path: input_binary_path,
-                            service_name: input_service_name,
-                            display_name: input_display_name,
-                            username: input_username,
-                            password: input_password,
-                        }
-                    }
-                }
-                return Self {
-                    computer_name: input_computer_name,
-                    binary_path: input_binary_path,
-                    service_name: input_service_name,
-                    display_name: input_display_name,
-                    username: "".to_string(),
-                    password: "".to_string(),
-                }
-            }
+    pub fn new(input_computer_name: String, input_binary_path: String, input_service_name: String, input_display_name: String, input_username: String, input_password: String) -> Self {
+        if input_service_name.len() == 0 && input_display_name.len() == 0 {
             return Self {
                 computer_name: input_computer_name,
                 binary_path: input_binary_path,
-                service_name: input_service_name,
+                service_name: "mimiRust".to_string(),
                 display_name: "mimiRust Service".to_string(),
-                username: "".to_string(),
-                password: "".to_string(),
+                username: input_username,
+                password: input_password,
             }
         }
+
         Self {
             computer_name: input_computer_name,
             binary_path: input_binary_path,
-            service_name: "mimiRust".to_string(),
-            display_name: "mimiRust Service".to_string(),
-            username: "".to_string(),
-            password: "".to_string(),
+            service_name: input_service_name,
+            display_name: input_display_name,
+            username: input_username,
+            password: input_password,
         }
     }   
-
-    //Need a better way to actually start process.
-    //Now you need to start the process by doing; shell sc \\TARGET-HOST start TARGET-SERVICE
-    //Will also have to make it non-blocking.
-
+    
     pub fn execute(config: Self) -> bool {
+
         let handle_service_manager = open_service_manager(config.computer_name.clone());
         let handle_service = get_service_handle(handle_service_manager, config.service_name.clone());
 
@@ -86,6 +62,7 @@ impl PSExec {
             return false;
         } else if config.username.clone().len() < 1 && config.password.clone().len() > 0 {
             println!("[!] You cannot authenticate a user without it's username");
+            return false;
         }
 
         if handle_service != 0 as *mut SC_HANDLE__ {
@@ -110,7 +87,6 @@ fn open_service_manager(computer_name: String) -> *mut SC_HANDLE__ {
         let handle: *mut SC_HANDLE__ = OpenSCManagerA(cstring.as_ptr(), null(), SC_MANAGER_ALL_ACCESS);
         if handle == 0 as *mut SC_HANDLE__ {
             println!("[!] Failed to open service manager with error: {:?}", Error::last_os_error());
-            std::process::exit(0x100);
         }
         return handle;
     }

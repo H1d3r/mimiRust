@@ -146,35 +146,12 @@ fn handle_user_input(args: Vec<String>) -> Result<()> {
                         main()?;
                     },
                     "psexec" => {
-                        let config = match input.len() {
-                            3 => {
-                                let config = PSExec::new(input[1].clone(), input[2].clone(), None, None, None, None);
-                                config
-                            },
-                            4 => {
-                                let config = PSExec::new(input[1].clone(), input[2].clone(), Some(input[3].clone()), None, None, None);
-                                config
-                            },
-                            5 => {
-                                let config = PSExec::new(input[1].clone(), input[2].clone(), Some(input[3].clone()), Some(input[4].clone()), None, None);
-                                config
-                            },
-                            6 => {
-                                let config = PSExec::new(input[1].clone(), input[2].clone(), Some(input[3].clone()), Some(input[4].clone()), Some(input[5].clone()), None);
-                                config
-                            },
-                            7 => {
-                                let config = PSExec::new(input[1].clone(), input[2].clone(), Some(input[3].clone()), Some(input[4].clone()), Some(input[5].clone()), Some(input[6].clone()));
-                                config
-                            },
-                            _ => {
-                                println!("[*] PSExec workes as follows: psexec <computername> <binary_path> <optional: service name> <optional: serivce display name> <optional: domain\\username> <optional: password of domain\\username account>");
-                                std::process::exit(0x100);  
-                            },
-                        };
-
-                        if PSExec::execute(config.clone()) {
-                            println!("[+] Executed: {} on: {} with servicename: {} and description: {}", config.binary_path, config.computer_name, config.service_name, config.display_name);
+                        let parsed_args: PSExec = Utils::parse_arguments(input, vec!["computer", "binary_path", "sn", "sdn", "user", "pass"], vec!["computer".to_string(), "binary_path".to_string()]);
+                        if parsed_args.computer_name.len() > 0 && parsed_args.binary_path.len() > 0 {
+                            let config: PSExec = PSExec::new(parsed_args.computer_name, parsed_args.binary_path, parsed_args.service_name, parsed_args.display_name, parsed_args.username, parsed_args.password);
+                            if PSExec::execute(config.clone()) {
+                                println!("[+] Executed: {} on: {} with servicename: {} and description: {}", config.binary_path, config.computer_name, config.service_name, config.display_name);
+                            }
                         }
                     },
                     "pth" => {

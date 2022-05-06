@@ -1,4 +1,3 @@
-
 use winapi::um::winbase::{
     LookupPrivilegeValueW,
 };
@@ -27,8 +26,11 @@ use winapi::um::winnt::{
 
 use winapi::shared::minwindef::FALSE;
 
+use crate::pivioting::scm::PSExec;
+
 use std::io::Error;
 use std::ptr::null_mut;
+use anyhow::Result;
 
 use std::io::{
     stdin,
@@ -145,6 +147,76 @@ impl Utils {
     
         return result;
     }
+
+    pub fn parse_arguments(full_input: Vec<String>, poss_args: Vec<&str>, enf_args: Vec<String>) -> PSExec {
+        let mut found_args = vec![];
+
+        for arg in full_input {
+            if arg.starts_with("/") && arg.contains(":") {
+                let split_symbol: char = ':';
+                let (command, argument) = arg.split_at(get_first_char_offset(arg.clone(), split_symbol));
+
+                for poss_arg in &poss_args {
+                    if command[1..].to_string() == poss_arg.to_string() {
+                        found_args.push(vec![command[1..].to_string(), argument[1..].to_string()]);
+                    }
+                }
+            }
+        }
+
+        if enforced_present(found_args.clone(), enf_args.clone()) {
+            return PSExec {
+                computer_name: handle_it(found_args.clone(), "computer".to_string()),
+                binary_path: handle_it(found_args.clone(), "binary_path".to_string()),
+                service_name: handle_it(found_args.clone(), "sn".to_string()),
+                display_name: handle_it(found_args.clone(), "sdn".to_string()),
+                username: handle_it(found_args.clone(), "user".to_string()),
+                password: handle_it(found_args.clone(), "pass".to_string()),
+            }
+        } else {
+            println!("[*] PSExec works as follows: psexec /computer:<computername> /binary_path:<binary_path> /sn:<optional service name> /sdn:<optional service display name> /user:<optional domain\\username> /pass:<optional password of domain\\username>");
+        }
+        PSExec {
+            computer_name: String::from(""),
+            binary_path: String::from(""),
+            service_name: String::from(""),
+            display_name: String::from(""),
+            username: String::from(""),
+            password: String::from(""),
+        }
+    }
+
+}
+
+fn handle_it(input: Vec<Vec<String>>, expected: String) -> String {
+
+    for indexes in input {
+        if indexes[0] == expected {
+            return indexes[1].clone();
+        }
+    }
+
+    String::from("")
+}
+
+fn enforced_present(input_vector: Vec<Vec<String>>, enf_args: Vec<String>) -> bool {
+    let mut counter = 0;
+
+    for indexes in input_vector {
+        for enf_arg in &enf_args {
+            if indexes[0].to_string() == enf_arg.to_string() {
+                if indexes[1].len() > 0 {
+                    counter += 1;
+                }
+            }
+        }
+    }
+
+    if counter == enf_args.len() {
+        return true;
+    }
+
+    false
 }
 
 fn get_permission_status() -> i32 {
@@ -156,4 +228,18 @@ fn get_permission_status() -> i32 {
     } else {
         return 2;
     }
+}
+
+fn get_first_char_offset(input: String, target_character: char) -> usize {
+    let mut offset = 0;
+
+    for i in input.chars() {
+        if i == target_character {
+            return offset;
+        } else {
+            offset += 1;
+        }
+    }
+    
+    offset
 }
