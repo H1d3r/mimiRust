@@ -56,13 +56,13 @@
 <p>Todo:</p>
 <small>Not in chronological order.</small>
 <ul>
-  <li>Reg dump the SYSTEM, SAM and SECURITY hives.</li>
-  <li>SCTasks to create and start a service on another endpoint.</li>
-  <li>Output all stdout/stderr to a named pipe</li>
+  <li>Dumping SYSTEM, SAM and SECURITY hives to crack hashes locally.</li>
+  <li>Scheduled task to create and start a service on another endpoint.</li>
+  <li>Allow full encrypted communications over namedpipe.</li>
   <li>Bypass UAC and escalate automatically to SYSTEM.</li>
-  <li>PtH (Pass-The-Hash)</li>
-  <li>Kerberos Golden Ticket</li>
-  <li>lsa patch to get NTLM hashes from LSASS (Local Security Authority Subsystem Service)</li>
+  <li>PtH (Pass-The-Hash).</li>
+  <li>Kerberos Golden Ticket.</li>
+  <li>LSA patch to get NTLM hashes from LSASS (Local Security Authority Subsystem Service).</li>
 </ul>
 <small><strong>Maybe in the future I will make API calls obfuscated and strings polymorphic</strong></small>
 
