@@ -8,7 +8,7 @@ documentation = "https://github.com/thottysploity/mimiRust"
 repository = "https://github.com/thottysploity/mimiRust"
 readme = "README.md"
 license = "GNU General Public License v3.0"
-keywords = ["windows", "rust", "hacking", "hack", "password", "exploits", "mimikatz", "hacking-tool", "ntlm", "wdigest", "psexec"]
+keywords = ["windows", "rust", "hacking", "password", "mimikatz"]
 categories = ["hacking-tools", "command-line-interface"]
 exclude = [
     "target/*",
