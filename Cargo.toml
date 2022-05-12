@@ -10,6 +10,9 @@ readme = "README.md"
 license = "GNU General Public License v3.0"
 keywords = ["windows", "rust", "hacking", "hack", "password", "exploits", "mimikatz", "hacking-tool", "ntlm", "wdigest", "psexec"]
 categories = ["hacking-tools", "command-line-interface"]
+exclude = [
+    "target/*",
+]
 
 [dependencies]
 winapi = { version = "0.3", features = ["bcrypt", "winnt", "minwindef", "ntdef", "libloaderapi", "psapi", "securitybaseapi", "tlhelp32", "processthreadsapi", "handleapi", "winsvc"] }
