@@ -3,7 +3,7 @@
 <br><h3>Disclaimer</h3>
 <p>By changing, adding, using or spreading this codebase you solely accept responsibility. The original creator, by the monikor: ThottySploity, is not responsible for what you do with the information and code provided. This code is intended for professional or educational purposes only.</p>
 
-<p>MimiRust was only created because I was bored, wanted to learn more about MimiKatz and I find these kinds of programs very interesting. I do not condone using this program outside of networks where you have no authorization.</p>
+<p>MimiRust was only created because I was bored, wanted to learn more about MimiKatz and I find these kinds of programs very interesting. I do not condone using this program inside of networks where you have no written consent from the owner of the network.</p>
 
 <br>
 
