@@ -1,5 +1,12 @@
 # MimiRust - Hacking the Windows operating system to hand us the keys to the kingdom with Rust.
 
+<br><h3>Disclaimer</h3>
+<p>By changing, adding, using or spreading this codebase you solely accept responsibility. The original creator, by the monikor: ThottySploity, is not responsible for what you do with the information and code provided. This code is intended for professional or educational purposes only.</p>
+
+<p>MimiRust was only created because I was bored, wanted to learn more about MimiKatz and I find these kinds of programs very interesting. I do not condone using this program outside of networks where you have no authorization.</p>
+
+<br>
+
 <code>
 
     ███▄ ▄███▓ ██▓ ███▄ ▄███▓ ██▓ ██▀███   █    ██   ██████ ▄▄▄█████▓
@@ -45,7 +52,7 @@
     mimiRust::passwords @ dump-credentials
 
 </code>
-<p>MimiRust is a post-exploitation tool that can be used within redteam operations. Like the name suggests the entire project is made within the Rust language. MimiRust is capable of the following actions:</p>
+<p>MimiRust is a post-exploitation tool that can be used within redteam operations. MimiRust is a tool of all trades, it can spawn new processes, execute shell commands, extract Windows passwords and move laterally across a network. Like the name suggests the entire project is made within the Rust language. MimiRust is capable of the following tasks:</p>
 <ul>
   <li>Spawning any process as SYSTEM</li>
   <li>Executing shell commands</li>
@@ -105,11 +112,3 @@
 <h2>Demo</h2>
 <small>click on the demo to get a higher resolution</small>
 <img src="https://github.com/ThottySploity/mimiRust/blob/main/demo.gif" alt="mimiRust Demo" width="100%">
-
-<br><h3>Disclaimer</h3>
-<p>I am not responsible for what you do with the information and code provided. This is intended for professional or educational purposes only.</p>
-<br>
-<h2>Author</h2>
-<h3>Why was MimiRust made</h3>
-<p>MimiRust was created as a project by a first years Cyber Security Bachelors student. The reason for this is because I was too bored learning about business processes in a Security Bachelors that I decided to just start for myself.</p>
-<br>
