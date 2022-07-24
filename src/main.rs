@@ -4,6 +4,7 @@ pub mod privilege;
 pub mod utilities;
 
 use passwords::{
+    hives::Hives,
     ntlm::Ntlm,
     wdigest::Wdigest, 
 };
@@ -15,7 +16,10 @@ use pivioting::{
 };
 
 use privilege::Escalation;
-use utilities::Utils;
+use utilities::{
+    Utils, 
+    ArgParser,
+};
 
 use console::Term;
 use clap::Parser;
@@ -40,7 +44,6 @@ struct Args {
     #[clap(long)]
     shell: Vec<String>,
 }
-
 
 fn main() -> Result<()> {
 
@@ -107,6 +110,13 @@ fn handle_user_input(args: Vec<String>) -> Result<()> {
                     "dump-hashes" => {
                         Ntlm::grab()?;
                     },
+                    "dump-hives" => {
+                        if input.len() == 2 {
+                            Hives::grab(input[1].clone())?;
+                        } else {
+                            println!("[*] Please use it as: dump-hives <PATH TO WRITE DUMP TO>");
+                        }
+                    },
                     "clear" => {
                         let term = Term::stdout();
                         term.clear_screen()?;
@@ -119,6 +129,7 @@ fn handle_user_input(args: Vec<String>) -> Result<()> {
                         println!("
                         \rdump-credentials             Dumps systems credentials through Wdigest.
                         \rdump-hashes                  Dumps systems NTLM hashes (requires SYSTEM permissions).
+                        \rdump-hives                   Dumps SAM, SECURITY and SYSTEM hives (requires SYSTEM permissions).
                         \rclear                        Clears the screen of any past output.
                         \rexit                         Moves to top level menu
                         ");
@@ -146,7 +157,7 @@ fn handle_user_input(args: Vec<String>) -> Result<()> {
                         main()?;
                     },
                     "psexec" => {
-                        let parsed_args: PSExec = Utils::parse_arguments(input, vec!["computer", "binary_path", "sn", "sdn", "user", "pass"], vec!["computer".to_string(), "binary_path".to_string()]);
+                        let parsed_args: PSExec = ArgParser::parse_arguments_psexec(input, vec!["computer", "binary_path", "sn", "sdn", "user", "pass"], vec!["computer".to_string(), "binary_path".to_string()]);
                         if parsed_args.computer_name.len() > 0 && parsed_args.binary_path.len() > 0 {
                             let config: PSExec = PSExec::new(parsed_args.computer_name, parsed_args.binary_path, parsed_args.service_name, parsed_args.display_name, parsed_args.username, parsed_args.password);
                             if PSExec::execute(config.clone()) {
@@ -219,6 +230,7 @@ fn handle_user_input(args: Vec<String>) -> Result<()> {
             \r      passwords:
             \r              • dump-credentials             Dumps systems credentials through Wdigest.
             \r              • dump-hashes                  Dumps systems NTLM hashes (requires SYSTEM permissions).
+            \r              • dump-hives                   Dumps SAM, SECURITY and SYSTEM hives (requires SYSTEM permissions).
             \r              • clear                        Clears the screen of any past output.
             \r              • exit                         Moves to top level menu
             \r
@@ -226,7 +238,7 @@ fn handle_user_input(args: Vec<String>) -> Result<()> {
             \r              • shell <SHELL COMMAND>        Execute a shell command through cmd, returns output.
             \r              • clear                        Clears the screen of any past output.
             \r              • exit                         Moves to top level menu
-            \r              • (W.I.P)psexec                Executes a service on another system.
+            \r              • psexec                       Executes a service on another system.
             \r              • (W.I.P)pth                   Pass-the-Hash to run a command on another system.
             \r              • (W.I.P)golden-ticket         Creates a golden ticket for a user account with the domain.
             \r

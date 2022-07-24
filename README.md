@@ -32,6 +32,7 @@
       passwords:
               • dump-credentials             Dumps systems credentials through Wdigest.
               • dump-hashes                  Dumps systems NTLM hashes (requires SYSTEM permissions).
+              • dump-hives                   Dumps SAM, SECURITY and SYSTEM hives (requires SYSTEM permissions).
               • clear                        Clears the screen of any past output.
               • exit                         Moves to top level menu
 
@@ -59,11 +60,11 @@
   <li>Extracting Windows passwords out of memory through the wdigest attack vector.</li>
   <li>Extracting Windows NTLM hashes from user accounts (aes / des) & (md5 / rc4)</li>
   <li>PSExec to create and start a service on another endpoint.</li>
+  <li>Dumps SYSTEM, SAM and SECURITY hives to disk (using CVE-2021-36934 and WinAPI (bypasses any EDR checking for reg.exe save / export))</li>
 </ul><br>
 <p>Todo:</p>
 <small>Not in chronological order.</small>
 <ul>
-  <li>Dumping SYSTEM, SAM and SECURITY hives to crack hashes locally.</li>
   <li>Scheduled task to create and start a service on another endpoint.</li>
   <li>Allow full encrypted communications over namedpipe.</li>
   <li>Bypass UAC and escalate automatically to SYSTEM.</li>

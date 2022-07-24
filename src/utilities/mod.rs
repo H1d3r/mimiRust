@@ -26,11 +26,11 @@ use winapi::um::winnt::{
 
 use winapi::shared::minwindef::FALSE;
 
-use crate::pivioting::scm::PSExec;
+use crate::pivioting::{
+    scm::PSExec,
+};
 
-use std::io::Error;
 use std::ptr::null_mut;
-use anyhow::Result;
 
 use std::io::{
     stdin,
@@ -38,40 +38,30 @@ use std::io::{
     Write
 };
 
-const SE_DEBUG_NAME: [u16 ; 17] = [83u16, 101, 68, 101, 98, 117, 103, 80, 114, 105, 118, 105, 108, 101, 103, 101, 0];
+pub const SE_DEBUG_NAME: [u16 ; 17] = [83u16, 101, 68, 101, 98, 117, 103, 80, 114, 105, 118, 105, 108, 101, 103, 101, 0];
+pub const SE_BACKUP_NAME: [u16; 18] = [83, 101, 66, 97, 99, 107, 117, 112, 80, 114, 105, 118, 105, 108, 101, 103, 101, 0];
 
 pub struct Utils;
 
 impl Utils {
-    pub fn enable_debug_privilege() -> (bool, String) {
+    pub fn enable_privilege(privilege: *const u16) -> bool {
         unsafe {
             let mut token = null_mut();
-            let mut privilege: TOKEN_PRIVILEGES = std::mem::zeroed();
+            let mut token_privilege: TOKEN_PRIVILEGES = std::mem::zeroed();
 
-            privilege.PrivilegeCount = 1;
-            privilege.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+            token_privilege.PrivilegeCount = 1;
+            token_privilege.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
 
-            let result = LookupPrivilegeValueW(null_mut(), SE_DEBUG_NAME.as_ptr(), &mut privilege.Privileges[0].Luid);
-            if result == FALSE {
-                return (false, format!("[x] LookupPrivilege Error: {}", Error::last_os_error()));
-            } else {
-                let res = OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &mut token);
-                if res == FALSE {
-                    return (false, format!("[x] OpenProcessToken Error: {}", Error::last_os_error()));
-                } else {
-                    let token_adjust = AdjustTokenPrivileges(token, FALSE, &mut privilege, std::mem::size_of_val(&privilege) as u32, null_mut(), null_mut());
-                    if token_adjust == FALSE {
-                        return (false, format!("[x] AdjustTokenPrivileges Error: {}", Error::last_os_error()));
-                    } else {
-                        let close_handle = CloseHandle(token);
-                        if close_handle == FALSE {
-                            return (false, format!("[x] CloseHandle Error: {}", Error::last_os_error()));
-                        } else {
-                            return (true, format!("[!] Trying to enable debug privileges"));
+            if LookupPrivilegeValueW(null_mut(), privilege, &mut token_privilege.Privileges[0].Luid) != 0 {
+                if OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &mut token) != 0 {
+                    if AdjustTokenPrivileges(token, FALSE, &mut token_privilege, std::mem::size_of_val(&token_privilege) as u32, null_mut(), null_mut()) != 0 {
+                        if CloseHandle(token) != 0 {
+                            return true;
                         }
                     }
                 }
             }
+            false
         }
     }
 
@@ -148,30 +138,28 @@ impl Utils {
         return result;
     }
 
-    pub fn parse_arguments(full_input: Vec<String>, poss_args: Vec<&str>, enf_args: Vec<String>) -> PSExec {
-        let mut found_args = vec![];
+    pub fn convert_string_to_i32(input: String) -> i32 {
+        match input.parse::<i32>() {
+            Ok(output) => return output,
+            Err(_) => return 0,
+        };
+    } 
+}
 
-        for arg in full_input {
-            if arg.starts_with("/") && arg.contains(":") {
-                let split_symbol: char = ':';
-                let (command, argument) = arg.split_at(get_first_char_offset(arg.clone(), split_symbol));
+pub struct ArgParser;
 
-                for poss_arg in &poss_args {
-                    if command[1..].to_string() == poss_arg.to_string() {
-                        found_args.push(vec![command[1..].to_string(), argument[1..].to_string()]);
-                    }
-                }
-            }
-        }
+impl ArgParser {
+    pub fn parse_arguments_psexec(full_input: Vec<String>, poss_args: Vec<&str>, enf_args: Vec<String>) -> PSExec {
+        let psexec_args = handle_parsed_args(full_input.clone(), poss_args.clone());
 
-        if enforced_present(found_args.clone(), enf_args.clone()) {
+        if enforced_present(psexec_args.clone(), enf_args.clone()) {
             return PSExec {
-                computer_name: handle_it(found_args.clone(), "computer".to_string()),
-                binary_path: handle_it(found_args.clone(), "binary_path".to_string()),
-                service_name: handle_it(found_args.clone(), "sn".to_string()),
-                display_name: handle_it(found_args.clone(), "sdn".to_string()),
-                username: handle_it(found_args.clone(), "user".to_string()),
-                password: handle_it(found_args.clone(), "pass".to_string()),
+                computer_name: handle_it(psexec_args.clone(), "computer".to_string()),
+                binary_path: handle_it(psexec_args.clone(), "binary_path".to_string()),
+                service_name: handle_it(psexec_args.clone(), "sn".to_string()),
+                display_name: handle_it(psexec_args.clone(), "sdn".to_string()),
+                username: handle_it(psexec_args.clone(), "user".to_string()),
+                password: handle_it(psexec_args.clone(), "pass".to_string()),
             }
         } else {
             println!("[*] PSExec works as follows: psexec /computer:<computername> /binary_path:<binary_path> /sn:<optional service name> /sdn:<optional service display name> /user:<optional domain\\username> /pass:<optional password of domain\\username>");
@@ -185,7 +173,24 @@ impl Utils {
             password: String::from(""),
         }
     }
+}
 
+fn handle_parsed_args(full_input: Vec<String>, poss_args: Vec<&str>) -> Vec<Vec<String>> {
+    let mut found_args = vec![];
+
+    for arg in full_input {
+        if arg.starts_with("/") && arg.contains(":") {
+            let split_symbol: char = ':';
+            let (command, argument) = arg.split_at(get_first_char_offset(arg.clone(), split_symbol));
+
+            for poss_arg in &poss_args {
+                if command[1..].to_string() == poss_arg.to_string() {
+                    found_args.push(vec![command[1..].to_string(), argument[1..].to_string()]);
+                }
+            }
+        }
+    }
+    found_args
 }
 
 fn handle_it(input: Vec<Vec<String>>, expected: String) -> String {
