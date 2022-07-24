@@ -30,6 +30,7 @@
     Choose one of the following options:
 
       passwords:
+              • dump-browsers                Dumps chromium based browsers saved urls, usernames and passwords.
               • dump-credentials             Dumps systems credentials through Wdigest.
               • dump-hashes                  Dumps systems NTLM hashes (requires SYSTEM permissions).
               • dump-hives                   Dumps SAM, SECURITY and SYSTEM hives (requires SYSTEM permissions).
@@ -58,9 +59,10 @@
   <li>Spawning any process as SYSTEM</li>
   <li>Executing shell commands</li>
   <li>Extracting Windows passwords out of memory through the wdigest attack vector.</li>
-  <li>Extracting Windows NTLM hashes from user accounts (aes / des) & (md5 / rc4)</li>
+  <li>Extracting Windows NTLM hashes from user accounts (aes / des) & (md5 / rc4).</li>
   <li>PSExec to create and start a service on another endpoint.</li>
-  <li>Dumps SYSTEM, SAM and SECURITY hives to disk (using CVE-2021-36934 and WinAPI (bypasses any EDR checking for reg.exe save / export))</li>
+  <li>Dumping SYSTEM, SAM and SECURITY hives to disk (using CVE-2021-36934 and WinAPI (bypasses any EDR checking for reg.exe save / export)).</li>
+  <li>Dumping saved URLs, usernames and passwords from chromium browsers like Chrome and Brave.</li>
 </ul><br>
 <p>Todo:</p>
 <small>Not in chronological order.</small>

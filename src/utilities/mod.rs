@@ -31,12 +31,19 @@ use crate::pivioting::{
 };
 
 use std::ptr::null_mut;
+use anyhow::{
+    anyhow,
+    Result
+};
 
 use std::io::{
     stdin,
     stdout,
     Write
 };
+
+use winreg::enums::*;
+use winreg::RegKey; 
 
 pub const SE_DEBUG_NAME: [u16 ; 17] = [83u16, 101, 68, 101, 98, 117, 103, 80, 114, 105, 118, 105, 108, 101, 103, 101, 0];
 pub const SE_BACKUP_NAME: [u16; 18] = [83, 101, 66, 97, 99, 107, 117, 112, 80, 114, 105, 118, 105, 108, 101, 103, 101, 0];
@@ -63,6 +70,13 @@ impl Utils {
             }
             false
         }
+    }
+
+    pub fn construct_directory(directory: &str) -> String {
+        if let Ok(home) = get_homedir() {
+            return format!("{}{}", home, directory);
+        }
+        return format!("Failed to construct directory");
     }
 
     pub fn is_elevated() -> bool {
@@ -143,7 +157,21 @@ impl Utils {
             Ok(output) => return output,
             Err(_) => return 0,
         };
-    } 
+    }
+
+    pub fn copy_file(src_location: &str, dst_location: &str) -> bool {
+        match std::fs::copy(src_location, dst_location) {
+            Ok(_) => return true,
+            Err(_) => return false,
+        };
+    }
+
+    pub fn remove_file(file_name: &str) -> bool {
+        match std::fs::remove_file(file_name) {
+            Ok(_) => return true,
+            Err(_) => return false,
+        };
+    }
 }
 
 pub struct ArgParser;
@@ -175,6 +203,32 @@ impl ArgParser {
     }
 }
 
+pub struct Registry;
+
+impl Registry {
+    pub fn current_user() -> RegKey {
+        return RegKey::predef(HKEY_CURRENT_USER);
+    }
+
+    pub fn local_machine() -> RegKey {
+        return RegKey::predef(HKEY_LOCAL_MACHINE);
+    }
+    
+    pub fn get_registry_value(predef: RegKey, key_location: &str, value_name: &str) -> Result<String> {
+        let handle = predef.open_subkey(key_location)?;
+        let output: String = handle.get_value(value_name)?;
+        Ok(output)
+    }
+
+    pub fn enumerate_registry_keys(predef: RegKey, key_location: &str) -> Result<Vec<String>> {
+        let mut registry_keys: Vec<String> = vec![];
+        for i in predef.open_subkey(key_location)?.enum_keys().map(|x| x.unwrap()) {
+            registry_keys.push(i);
+        }
+        Ok(registry_keys)
+    }
+}
+
 fn handle_parsed_args(full_input: Vec<String>, poss_args: Vec<&str>) -> Vec<Vec<String>> {
     let mut found_args = vec![];
 
@@ -202,6 +256,13 @@ fn handle_it(input: Vec<Vec<String>>, expected: String) -> String {
     }
 
     String::from("")
+}
+
+fn get_homedir() -> Result<String> {
+    match dirs::home_dir() {
+        Some(dir) => return Ok(format!("{}", dir.display())),
+        None => return Err(anyhow!(format!("Failed to get homedir"))),
+    };
 }
 
 fn enforced_present(input_vector: Vec<Vec<String>>, enf_args: Vec<String>) -> bool {
